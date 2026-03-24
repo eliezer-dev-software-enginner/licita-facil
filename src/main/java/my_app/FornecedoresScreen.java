@@ -1,0 +1,94 @@
+package my_app;
+
+import megalodonte.ForEachState;
+import megalodonte.ListState;
+import megalodonte.State;
+import megalodonte.base.Redirect;
+import megalodonte.base.UI;
+import megalodonte.components.Button;
+import megalodonte.components.Component;
+import megalodonte.components.SpacerVertical;
+import megalodonte.components.Text;
+import megalodonte.components.inputs.Input;
+import megalodonte.components.layout_components.Column;
+import megalodonte.components.layout_components.Row;
+import megalodonte.props.*;
+import my_app.models.FornecedorModel;
+
+import java.util.List;
+
+public class FornecedoresScreen {
+    State<String> cnpj = State.of("");
+    State<String> siteUrl = State.of("");
+
+    //TODO: carregar do json
+    ListState<String> sitesUrlList = ListState.of(List.of());
+
+    ListState<FornecedorModel> fornecedorModelListState = ListState.of(List.of());
+
+    public FornecedoresScreen(){
+        loadList();
+    }
+
+    void loadList(){
+        UI.runOnUi(()->{
+            try{
+              fornecedorModelListState.set(Main.jsonDB.listarFornecedores());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+    public Component render() {
+
+        ForEachState<FornecedorModel, Component> forEachState = ForEachState.of(fornecedorModelListState, (it)-> fornecedorItem(it));
+
+        return new Column(new ColumnProps().paddingAll(20))
+                .children(
+                        new Button("Siga-me no Github").onClick(()-> Redirect.to("https://github.com/eliezer-dev-software-enginner")),
+                        new SpacerVertical(10),
+                        new Text("Algumas facilidades para agilizar o cadastro de fornecedores no PNCP"),
+                        new SpacerVertical(20),
+                        new Text("CNPJ do fornecedor"),
+                        new Input(cnpj, new InputProps().placeHolder("Ex: xxxxxxxxxx").borderColor("black")),
+                        new Text("Site do fornecedor"),
+                        new Input(siteUrl, new InputProps().placeHolder("Ex: www.site.com").borderColor("black")),
+                        new SpacerVertical(10),
+                        new Button("Adicionar").onClick(this::handleClickAdicionar),
+                        new SpacerVertical(10),
+                        new Column().items(forEachState),
+                        new SpacerVertical(20),
+                        new Row(new RowProps().centerHorizontally()).children(
+                                new Text("Criado por Eliezer - 2026", new TextProps().fontSize(12))
+                        )
+                );
+    }
+
+    Component fornecedorItem(FornecedorModel model){
+        return new Row().children(
+                new Column().children(
+                        new Text("CNPJ"),
+                        new Text(model.cnpj())
+                ),
+               new Column().children(
+                       new Text("Site"),
+                       new Text(model.sites().getFirst())
+               )
+        );
+    }
+
+    void handleClickAdicionar(){
+        UI.runOnUi(()->{
+            try{
+                Main.jsonDB.salvarFornecedor(new FornecedorModel(cnpj.get(), sitesUrlList.get()));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+    void handleClickEncerrarProcessos(){
+
+    }
+}
