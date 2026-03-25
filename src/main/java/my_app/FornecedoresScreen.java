@@ -13,20 +13,20 @@ import megalodonte.components.inputs.Input;
 import megalodonte.components.layout_components.Column;
 import megalodonte.components.layout_components.Row;
 import megalodonte.props.*;
+import megalodonte.router.v2.Router;
 import my_app.models.FornecedorModel;
 
 import java.util.List;
 
 public class FornecedoresScreen {
+    private final Router router;
     State<String> cnpj = State.of("");
     State<String> siteUrl = State.of("");
 
-    //TODO: carregar do json
-    ListState<String> sitesUrlList = ListState.of(List.of());
-
     ListState<FornecedorModel> fornecedorModelListState = ListState.of(List.of());
 
-    public FornecedoresScreen(){
+    public FornecedoresScreen(Router router){
+        this.router = router;
         loadList();
     }
 
@@ -73,7 +73,7 @@ public class FornecedoresScreen {
                 ),
                new Column().children(
                        new Text("Site"),
-                       new Text(model.sites().getFirst())
+                       new Text(model.site())
                )
         );
     }
@@ -81,14 +81,10 @@ public class FornecedoresScreen {
     void handleClickAdicionar(){
         UI.runOnUi(()->{
             try{
-                Main.jsonDB.salvarFornecedor(new FornecedorModel(cnpj.get(), sitesUrlList.get()));
+                Main.jsonDB.salvarFornecedor(new FornecedorModel(cnpj.get(), siteUrl.get()));
             } catch (Exception e) {
                 e.printStackTrace();
             }
         });
-    }
-
-    void handleClickEncerrarProcessos(){
-
     }
 }

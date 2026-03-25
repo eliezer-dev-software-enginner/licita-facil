@@ -44,10 +44,16 @@ dependencies {
     implementation("megalodonte:megalodonte-base:1.0.0-beta")
     implementation("megalodonte:megalodonte-components:1.0.0-beta")
     implementation("megalodonte:megalodonte-reactivity:1.0.0-beta")
+    implementation("megalodonte:megalodonte-router:1.0.0-beta")
 
     implementation("com.fasterxml.jackson.core:jackson-core:2.17.0")
     implementation("com.fasterxml.jackson.core:jackson-databind:2.17.0")
     implementation("com.fasterxml.jackson.core:jackson-annotations:2.17.0")
+
+    implementation("org.kordamp.ikonli:ikonli-core:12.4.0")
+    implementation("org.kordamp.ikonli:ikonli-javafx:12.4.0")
+    implementation("org.kordamp.ikonli:ikonli-antdesignicons-pack:12.4.0")
+    implementation("org.kordamp.ikonli:ikonli-entypo-pack:12.4.0")
 }
 
 tasks.test {
