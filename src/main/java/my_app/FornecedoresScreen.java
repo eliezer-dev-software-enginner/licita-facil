@@ -57,7 +57,7 @@ public class FornecedoresScreen {
                         new SpacerVertical(10),
                         new Button("Adicionar").onClick(this::handleClickAdicionar),
                         new SpacerVertical(10),
-                        new Column().items(forEachState),
+                        new Column().items(forEachState,true),
                         new SpacerVertical(20),
                         new Row(new RowProps().centerHorizontally()).children(
                                 new Text("Criado por Eliezer - 2026", new TextProps().fontSize(12))
@@ -66,7 +66,7 @@ public class FornecedoresScreen {
     }
 
     Component fornecedorItem(FornecedorModel model){
-        return new Row().children(
+        return new Row(new RowProps().spacingOf(10)).children(
                 new Column().children(
                         new Text("CNPJ"),
                         new Text(model.cnpj())
@@ -81,10 +81,16 @@ public class FornecedoresScreen {
     void handleClickAdicionar(){
         UI.runOnUi(()->{
             try{
-                String baseUrl = getBaseUrl(siteUrl.get());
+                String baseUrl = getBaseUrl(siteUrl.get().trim());
                 System.out.println(baseUrl);
 
-                var data = new FornecedorModel(cnpj.get(), baseUrl);
+                String cnpj_ = cnpj.get().trim();
+                if(!CnpjValidator.isValid(cnpj_)){
+                    Components.ShowAlertError("CNPJ inválido");
+                    return;
+                }
+
+                var data = new FornecedorModel(cnpj_, baseUrl);
 
                 Main.jsonDB.salvarFornecedor(data);
                 fornecedorModelListState.add(data);

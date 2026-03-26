@@ -2,6 +2,9 @@ package my_app;
 
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonBar;
+import javafx.scene.control.ButtonType;
 import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -42,6 +45,19 @@ public class Components {
        // stage.initOwner(context.javafxStage());
         stage.show();
     }
+
+    public static void ShowAlertError(String message) {
+        Alert alert = new Alert(Alert.AlertType.NONE);
+        alert.setTitle("Erro");
+
+        ButtonType okButton = new ButtonType("Fechar", ButtonBar.ButtonData.OK_DONE);
+
+        alert.getButtonTypes().add(okButton);
+        alert.setOnCloseRequest(event -> alert.close());
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
+
 
     public static Component produtoForm( State<String> urlState,  State<String> precoState, State<String> imprimiuState,
                                          State<String> cadastrouNoSiplanState, State<String> cnpjState){
