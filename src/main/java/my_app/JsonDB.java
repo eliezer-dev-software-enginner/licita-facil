@@ -3,6 +3,7 @@ package my_app;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import my_app.models.DbModel;
 import my_app.models.FornecedorModel;
+import my_app.models.ProdutoModel;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -45,5 +46,9 @@ public class JsonDB {
 
     public List<FornecedorModel> listarFornecedores() throws IOException {
         return carregarDb().fornecedores();
+    }
+
+    public List<ProdutoModel> listarProdutos() throws IOException {
+        return carregarDb().produtos();
     }
 }
