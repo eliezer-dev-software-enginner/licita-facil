@@ -81,7 +81,10 @@ public class FornecedoresScreen {
     void handleClickAdicionar(){
         UI.runOnUi(()->{
             try{
-                Main.jsonDB.salvarFornecedor(new FornecedorModel(cnpj.get(), siteUrl.get()));
+               var data = new FornecedorModel(cnpj.get(), siteUrl.get());
+                
+                Main.jsonDB.salvarFornecedor(data);
+                fornecedorModelListState.add(data);
             } catch (Exception e) {
                 e.printStackTrace();
             }
