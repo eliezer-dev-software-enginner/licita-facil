@@ -85,6 +85,8 @@ public class FornecedoresScreen {
                 
                 Main.jsonDB.salvarFornecedor(data);
                 fornecedorModelListState.add(data);
+
+                EventBus.getInstance().publish(ModelCadastradoEvent.getInstance());
             } catch (Exception e) {
                 e.printStackTrace();
             }
