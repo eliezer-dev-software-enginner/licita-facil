@@ -28,6 +28,12 @@ public class ProdutosTableScreen {
 
     public ProdutosTableScreen(Router router) {
         this.router = router;
+
+        EventBus.getInstance().subscribe(event -> {
+                    if (event instanceof ModelCadastradoEvent) {
+                        fetchData();
+                    }
+                });
     }
 
     public Component render() {
@@ -61,13 +67,13 @@ public class ProdutosTableScreen {
     }
 
 
-
     String cnpjFromUrl(String url){
        // if(url.contains(""))
         return null;
 
         //TODO: implementar
     }
+
     Component ItemDetails(ProdutoModel model){
         return new Column(new ColumnProps().paddingAll(20))
                 .c_child(new Text("Detalhes do produto", new TextProps().variant(TextVariant.SUBTITLE)))
