@@ -17,24 +17,10 @@ public class Main {
 
     static void main() {
         MegalodonteApp.run(context -> {
-            final var stage = context.javafxStage();
-            stage.setTitle("licita-facil por Eliezer Dev");
-            stage.setWidth(900);
-            stage.setHeight(650);
-
-            var routes = Set.of(
-                    new Router.Route("home", router -> new HomeScreen(router),
-                            new RouteProps(900, 550,null, false)),
-                    //ok
-                    new Router.Route("screen-b",router-> new FornecedoresScreen(router),
-                            new RouteProps(1000, 650, "Tela B", true))
-            );
-
-            var router = new Router(routes, "home");
+            var router = getRouter(context);
 
             context.useRouter(router);
             context.useView(router.entrypoint().view());
-
 
 
             //initialize(context);
@@ -46,6 +32,23 @@ public class Main {
                 ListenerManager.disposeAll();
             });
         });
+    }
+
+    private static Router getRouter(Context context) {
+        final var stage = context.javafxStage();
+        stage.setTitle("licita-facil por Eliezer Dev");
+        stage.setWidth(900);
+        stage.setHeight(650);
+
+        var routes = Set.of(
+                new Router.Route("home", router -> new HomeScreen(router),
+                        new RouteProps(900, 550,null, false)),
+                //ok
+                new Router.Route("screen-b",router-> new FornecedoresScreen(router),
+                        new RouteProps(1000, 650, "Tela B", true))
+        );
+
+        return new Router(routes, "home");
     }
 
     //public static void initialize(Context context) {

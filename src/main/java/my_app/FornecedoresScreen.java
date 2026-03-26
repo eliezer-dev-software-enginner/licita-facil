@@ -81,8 +81,11 @@ public class FornecedoresScreen {
     void handleClickAdicionar(){
         UI.runOnUi(()->{
             try{
-               var data = new FornecedorModel(cnpj.get(), siteUrl.get());
-                
+                String baseUrl = getBaseUrl(siteUrl.get());
+                System.out.println(baseUrl);
+
+                var data = new FornecedorModel(cnpj.get(), baseUrl);
+
                 Main.jsonDB.salvarFornecedor(data);
                 fornecedorModelListState.add(data);
 
@@ -91,5 +94,12 @@ public class FornecedoresScreen {
                 e.printStackTrace();
             }
         });
+    }
+
+    String getBaseUrl(String fullUrl){
+        String[] splited = fullUrl.split(".br/");
+
+        //vai até o .com
+        return splited[0] + ".br";
     }
 }
