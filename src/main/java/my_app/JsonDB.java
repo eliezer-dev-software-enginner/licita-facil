@@ -44,6 +44,12 @@ public class JsonDB {
         salvarDb(db);
     }
 
+    public void salvarProduto(ProdutoModel model) throws IOException {
+        DbModel db = carregarDb();
+        db.produtos().add(model);
+        salvarDb(db);
+    }
+
     public List<FornecedorModel> listarFornecedores() throws IOException {
         return carregarDb().fornecedores();
     }
