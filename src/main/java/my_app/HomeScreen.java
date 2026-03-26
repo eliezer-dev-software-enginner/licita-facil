@@ -25,8 +25,6 @@ public class HomeScreen {
     State<String> codigo = State.of("");
     State<Boolean> buscarWasClicked = State.of(false);
 
-    ListState<ProdutoModel> produtosListState = ListState.of(List.of());
-
     State<String> urlState1=State.of(""),  precoState1=State.of("0"), imprimiuState1=State.of("Não"), cadastrouNoSiplanState1=State.of("Não"),  cnpjState1=State.of("");
     State<String> urlState2=State.of(""),  precoState2=State.of("0"), imprimiuState2=State.of("Não"), cadastrouNoSiplanState2=State.of("Não"),  cnpjState2=State.of("");
     State<String> urlState3=State.of(""),  precoState3=State.of("0"), imprimiuState3=State.of("Não"), cadastrouNoSiplanState3=State.of("Não"),  cnpjState3=State.of("");
@@ -53,14 +51,14 @@ public class HomeScreen {
                         new SpacerVertical(20),
                         topForm(),
                         new SpacerVertical(20),
-                        Show.when(buscarWasClicked, ()->{
-                            return new Column(new ColumnProps().spacingOf(10))
+                        Show.when(buscarWasClicked, ()->
+                             new Column(new ColumnProps().spacingOf(10))
                                     .children(
                                       Components.produtoForm(urlState1,  precoState1, imprimiuState1, cadastrouNoSiplanState1,  cnpjState1),
                                             Components.produtoForm(urlState2,  precoState2, imprimiuState2, cadastrouNoSiplanState2,  cnpjState2),
                                             Components.produtoForm(urlState3,  precoState3, imprimiuState3, cadastrouNoSiplanState3,  cnpjState3)
-                                    );
-                        }),
+                                    )
+                        ),
                         new SpacerVertical(20),
                         Components.TextWithValue("Média: ", precoMedioComputedState),
                         new SpacerVertical(20),
