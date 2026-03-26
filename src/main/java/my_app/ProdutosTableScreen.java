@@ -46,7 +46,10 @@ public class ProdutosTableScreen {
 
 
     void fetchData(){
-
+        try{
+            var list = Main.jsonDB.listarProdutos();
+            produtosListState.set(list);
+        } catch (Exception e) {e.printStackTrace();}
     }
 
 
