@@ -79,6 +79,16 @@ public class HomeScreen {
 
                            stage.show();
                         })
+                        .item("Ver Produtos", ()-> {
+                            var stage =  new Stage();
+
+                            var scene = new Scene((Parent) new ProdutosTableScreen(router).render().getJavaFxNode());
+                            stage.setScene(scene);
+                            stage.setWidth(800);
+                            stage.setHeight(600);
+
+                            stage.show();
+                        })
                 );
     }
 
