@@ -211,6 +211,8 @@ public class HomeScreen {
 
 
     void limparInputs(){
+        codigo.set("");
+
         urlState1.set("");
         precoState1.set("0");
         imprimiuState1.set("Não");
