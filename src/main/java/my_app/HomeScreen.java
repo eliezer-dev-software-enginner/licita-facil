@@ -117,7 +117,10 @@ public class HomeScreen {
                 new SpacerHorizontal(20),
                 new Column().children(
                         new SpacerVertical(13),
-                        new Button("Limpar", new ButtonProps().height(30)).onClick(this::limpar)
+                        new Button("Limpar", new ButtonProps().height(30)).onClick(()->{
+                            limparInputs();
+                            buscarWasClicked.set(false);
+                        })
                 ),
                 new SpacerHorizontal(20),
                 new Column().children(
@@ -195,6 +198,8 @@ public class HomeScreen {
                 Components.ShowPopup(Main.stage, "Produto 3 Foi salvo");
 
                 EventBus.getInstance().publish(ModelCadastradoEvent.getInstance());
+
+                limparInputs();
             } catch (Exception e) {
                 Components.ShowAlertError(e.getMessage());
             }
@@ -203,7 +208,7 @@ public class HomeScreen {
     }
 
 
-    void limpar(){
+    void limparInputs(){
         urlState1.set("");
         precoState1.set("0");
         imprimiuState1.set("Não");
@@ -218,8 +223,6 @@ public class HomeScreen {
         precoState3.set("0");
         imprimiuState3.set("Não");
         cadastrouNoSiplanState3.set("Não");
-
-        buscarWasClicked.set(false);
     }
 
 }

@@ -27,4 +27,8 @@ public class EventBus {
             listener.accept(event);
         }
     }
+
+    public void disposeAll() {
+        listeners.clear();
+    }
 }

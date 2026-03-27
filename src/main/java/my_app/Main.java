@@ -17,13 +17,12 @@ public class Main {
     public static JsonDB jsonDB = new JsonDB();
     public static Stage stage;
 
-    static void main() {
+    public static void main() {
         MegalodonteApp.run(context -> {
             var router = getRouter(context);
 
             context.useRouter(router);
             context.useView(router.entrypoint().view());
-
 
             //initialize(context);
             initialize(router, context);
@@ -32,6 +31,7 @@ public class Main {
                 System.out.println("Clicked on X - close application");
                 hotReload.stop();
                 ListenerManager.disposeAll();
+                EventBus.getInstance().disposeAll();
             });
         });
     }
