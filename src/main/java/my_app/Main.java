@@ -1,5 +1,6 @@
 package my_app;
 
+import javafx.stage.Stage;
 import megalodonte.ListenerManager;
 import megalodonte.application.Context;
 import megalodonte.application.MegalodonteApp;
@@ -14,6 +15,7 @@ public class Main {
     static boolean devMode = false;
 
     public static JsonDB jsonDB = new JsonDB();
+    public static Stage stage;
 
     static void main() {
         MegalodonteApp.run(context -> {
@@ -36,6 +38,7 @@ public class Main {
 
     private static Router getRouter(Context context) {
         final var stage = context.javafxStage();
+        Main.stage = stage;
         stage.setTitle("licita-facil por Eliezer Dev");
         stage.setWidth(900);
         stage.setHeight(650);

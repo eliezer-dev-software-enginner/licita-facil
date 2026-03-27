@@ -10,6 +10,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
+import static my_app.Utils.getBaseUrl;
+
 public class JsonDB {
     private final Path filePath;
     private ObjectMapper om;
@@ -57,4 +59,20 @@ public class JsonDB {
     public List<ProdutoModel> listarProdutos() throws IOException {
         return carregarDb().produtos();
     }
+
+    public FornecedorModel buscarFornecedorPorUrl(String fullUrl) throws IOException {
+        String baseUrl = getBaseUrl(fullUrl);
+
+        return carregarDb().fornecedores().stream()
+                .filter(f -> f.site().equalsIgnoreCase(baseUrl))
+                .findFirst()
+                .orElse(null);
+    }
+
+    public List<ProdutoModel> listarProdutosPorCodigo(String codigo) throws IOException {
+        return carregarDb().produtos().stream()
+                .filter(p -> p.codigo.equals(codigo))
+                .toList();
+    }
+
 }

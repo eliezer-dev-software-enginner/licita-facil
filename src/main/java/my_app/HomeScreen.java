@@ -2,9 +2,12 @@ package my_app;
 
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.web.WebEngine;
+import javafx.scene.web.WebView;
 import javafx.stage.Stage;
 import megalodonte.*;
 import megalodonte.base.Redirect;
+import megalodonte.base.UI;
 import megalodonte.components.*;
 import megalodonte.components.inputs.Input;
 import megalodonte.components.layout_components.Column;
@@ -15,6 +18,8 @@ import megalodonte.utils.related.TextVariant;
 import my_app.models.ProdutoModel;
 
 import java.math.BigDecimal;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 public class HomeScreen {
@@ -25,9 +30,9 @@ public class HomeScreen {
     State<String> codigo = State.of("");
     State<Boolean> buscarWasClicked = State.of(false);
 
-    State<String> urlState1=State.of(""),  precoState1=State.of("0"), imprimiuState1=State.of("Não"), cadastrouNoSiplanState1=State.of("Não"),  cnpjState1=State.of("");
-    State<String> urlState2=State.of(""),  precoState2=State.of("0"), imprimiuState2=State.of("Não"), cadastrouNoSiplanState2=State.of("Não"),  cnpjState2=State.of("");
-    State<String> urlState3=State.of(""),  precoState3=State.of("0"), imprimiuState3=State.of("Não"), cadastrouNoSiplanState3=State.of("Não"),  cnpjState3=State.of("");
+    State<String> urlState1=State.of(""),  precoState1=State.of("0"), imprimiuState1=State.of("Não"), cadastrouNoSiplanState1=State.of("Não");
+    State<String> urlState2=State.of(""),  precoState2=State.of("0"), imprimiuState2=State.of("Não"), cadastrouNoSiplanState2=State.of("Não");
+    State<String> urlState3=State.of(""),  precoState3=State.of("0"), imprimiuState3=State.of("Não"), cadastrouNoSiplanState3=State.of("Não");
 
     ComputedState<String> precoMedioComputedState = ComputedState.of(()->{
         double preco1 = Double.parseDouble(precoState1.get()) / 100.0;
@@ -54,9 +59,9 @@ public class HomeScreen {
                         Show.when(buscarWasClicked, ()->
                              new Column(new ColumnProps().spacingOf(10))
                                     .children(
-                                      Components.produtoForm(urlState1,  precoState1, imprimiuState1, cadastrouNoSiplanState1,  cnpjState1),
-                                            Components.produtoForm(urlState2,  precoState2, imprimiuState2, cadastrouNoSiplanState2,  cnpjState2),
-                                            Components.produtoForm(urlState3,  precoState3, imprimiuState3, cadastrouNoSiplanState3,  cnpjState3)
+                                      Components.produtoForm(urlState1,  precoState1, imprimiuState1, cadastrouNoSiplanState1),
+                                            Components.produtoForm(urlState2,  precoState2, imprimiuState2, cadastrouNoSiplanState2),
+                                            Components.produtoForm(urlState3,  precoState3, imprimiuState3, cadastrouNoSiplanState3)
                                     )
                         ),
                         new SpacerVertical(20),
@@ -113,6 +118,11 @@ public class HomeScreen {
                 new Column().children(
                         new SpacerVertical(13),
                         new Button("Limpar", new ButtonProps().height(30)).onClick(this::limpar)
+                ),
+                new SpacerHorizontal(20),
+                new Column().children(
+                        new SpacerVertical(13),
+                        new Button("Salvar", new ButtonProps().height(30)).onClick(this::salvar)
                 )
         );
     }
@@ -127,26 +137,87 @@ public class HomeScreen {
     //        });
     void buscar(){
         buscarWasClicked.set(true);
+        String query = tituloBusca.get().trim();
+
+        if(query.isEmpty()){
+            Components.ShowAlertError("Titulo da busca está vazio!");
+            return;
+        }
+
+        if(codigo.get().trim().isEmpty()){
+            Components.ShowAlertError("Código está vazio!");
+            return;
+        }
+
+        String encoded = URLEncoder.encode(query, StandardCharsets.UTF_8);
+        String url = "https://www.google.com/search?q=" + encoded;
+        //getHostServices().showDocument(url);
+
+        Utils.abrirUrlEmBrowser(url);
     }
+
+    void salvar(){
+        ProdutoModel model1 = new ProdutoModel();
+        model1.tituloBusca = tituloBusca.get().trim();
+        model1.codigo = codigo.get().trim();
+
+        model1.urlEncontrada = urlState1.get().trim();
+        model1.precoEncontrado = Utils.deCentavosParaReal(precoState1.get());
+        model1.imprimiu = imprimiuState1.get().equals("Sim");
+        model1.imprimiu = cadastrouNoSiplanState1.get().equals("Sim");
+
+        ProdutoModel model2 = new ProdutoModel();
+        model2.tituloBusca = tituloBusca.get().trim();
+        model2.codigo = codigo.get().trim();
+
+        model2.urlEncontrada = urlState2.get().trim();
+        model2.precoEncontrado = Utils.deCentavosParaReal(precoState2.get());
+        model2.imprimiu = imprimiuState2.get().equals("Sim");
+        model2.imprimiu = cadastrouNoSiplanState2.get().equals("Sim");
+
+        ProdutoModel model3 = new ProdutoModel();
+        model3.tituloBusca = tituloBusca.get().trim();
+        model3.codigo = codigo.get().trim();
+
+        model3.urlEncontrada = urlState3.get().trim();
+        model3.precoEncontrado = Utils.deCentavosParaReal(precoState3.get());
+        model3.imprimiu = imprimiuState3.get().equals("Sim");
+        model3.imprimiu = cadastrouNoSiplanState3.get().equals("Sim");
+
+
+        UI.runOnUi(()->{
+            try{
+                Main.jsonDB.salvarProduto(model1);
+                Components.ShowPopup(Main.stage, "Produto 1 Foi salvo");
+                Main.jsonDB.salvarProduto(model2);
+                Components.ShowPopup(Main.stage, "Produto 2 Foi salvo");
+                Main.jsonDB.salvarProduto(model3);
+                Components.ShowPopup(Main.stage, "Produto 3 Foi salvo");
+
+                EventBus.getInstance().publish(ModelCadastradoEvent.getInstance());
+            } catch (Exception e) {
+                Components.ShowAlertError(e.getMessage());
+            }
+        });
+
+    }
+
 
     void limpar(){
         urlState1.set("");
         precoState1.set("0");
         imprimiuState1.set("Não");
         cadastrouNoSiplanState1.set("Não");
-        cnpjState1.set("");
         //
         urlState2.set("");
         precoState2.set("0");
         imprimiuState2.set("Não");
         cadastrouNoSiplanState2.set("Não");
-        cnpjState2.set("");
         //
         urlState3.set("");
         precoState3.set("0");
         imprimiuState3.set("Não");
         cadastrouNoSiplanState3.set("Não");
-        cnpjState3.set("");
 
         buscarWasClicked.set(false);
     }

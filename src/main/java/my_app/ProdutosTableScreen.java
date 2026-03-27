@@ -1,10 +1,12 @@
 package my_app;
 
+import javafx.scene.input.ClipboardContent;
 import megalodonte.ComputedState;
 import megalodonte.ListState;
 import megalodonte.Show;
 import megalodonte.State;
 import megalodonte.base.Redirect;
+import megalodonte.base.UI;
 import megalodonte.components.*;
 import megalodonte.components.inputs.Input;
 import megalodonte.components.layout_components.Column;
@@ -17,6 +19,7 @@ import megalodonte.router.v2.Router;
 import megalodonte.utils.related.TextVariant;
 import my_app.models.ProdutoModel;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -28,6 +31,8 @@ public class ProdutosTableScreen {
 
     public ProdutosTableScreen(Router router) {
         this.router = router;
+
+        fetchData();
 
         EventBus.getInstance().subscribe(event -> {
                     if (event instanceof ModelCadastradoEvent) {
@@ -48,7 +53,9 @@ public class ProdutosTableScreen {
     void fetchData(){
         try{
             var list = Main.jsonDB.listarProdutos();
-            produtosListState.set(list);
+            UI.runOnUi(()->{
+                produtosListState.set(list);
+            });
         } catch (Exception e) {e.printStackTrace();}
     }
 
@@ -71,29 +78,68 @@ public class ProdutosTableScreen {
 
 
     String cnpjFromUrl(String url){
-       // if(url.contains(""))
-        return null;
-
-        //TODO: implementar
+        try {
+            return Main.jsonDB.buscarFornecedorPorUrl(url).cnpj();
+        } catch (IOException e) {
+            Components.ShowAlertError(e.getMessage());
+            return "Falha/CNPJ";
+        }
     }
 
-    Component ItemDetails(ProdutoModel model){
-        return new Column(new ColumnProps().paddingAll(20))
+    Component ItemDetails(ProdutoModel model) {
+        List<ProdutoModel> fornecedores;
+        try {
+            fornecedores = Main.jsonDB.listarProdutosPorCodigo(model.codigo);
+        } catch (IOException e) {
+            Components.ShowAlertError(e.getMessage());
+            return new Text("Erro ao carregar fornecedores");
+        }
+
+        Column col = new Column(new ColumnProps().paddingAll(20))
                 .c_child(new Text("Detalhes do produto", new TextProps().variant(TextVariant.SUBTITLE)))
                 .c_child(new SpacerVertical(20))
                 .c_child(Components.TextWithDetails("Código: ", model.codigo))
-                .c_child(Components.TextWithDetails("Titulo: ", model.tituloBusca))
-                .c_child(new Text("--------Fornecedor 1--------------"))
-                .c_child(Components.TextWithDetails("CNPJ: ", model.urlEncontrada))
-                .c_child(Components.TextWithDetails("Url: ", cnpjFromUrl(model.urlEncontrada)))
-                .c_child(Components.TextWithDetails("Preço (R$): ", Utils.toBRLCurrency(model.precoEncontrado)))
-                .c_child(new Text("--------Fornecedor 2--------------"))
-                .c_child(Components.TextWithDetails("CNPJ: ", model.urlEncontrada))
-                .c_child(Components.TextWithDetails("Url: ", cnpjFromUrl(model.urlEncontrada)))
-                .c_child(Components.TextWithDetails("Preço (R$): ", Utils.toBRLCurrency(model.precoEncontrado)))
-                .c_child(new Text("--------Fornecedor 3--------------"))
-                .c_child(Components.TextWithDetails("CNPJ: ", model.urlEncontrada))
-                .c_child(Components.TextWithDetails("Url: ", cnpjFromUrl(model.urlEncontrada)))
-                .c_child(Components.TextWithDetails("Preço (R$): ", Utils.toBRLCurrency(model.precoEncontrado)));
+                .c_child(Components.TextWithDetails("Titulo: ", model.tituloBusca));
+
+        for (int i = 0; i < fornecedores.size(); i++) {
+            ProdutoModel f = fornecedores.get(i);
+            String cnpjFromUrl = cnpjFromUrl(f.urlEncontrada);
+
+            col.c_child(new Text("-------- Fornecedor " + (i + 1) + " --------------"))
+                    .c_child(Components.TextWithDetailsAndButton("URL: ", f.urlEncontrada,
+                            "Abrir", ()->{
+                                Utils.abrirUrlEmBrowser(f.urlEncontrada);
+                    }))
+                    .c_child(Components.TextWithDetailsAndButton("CNPJ: ", cnpjFromUrl,"Copiar", ()->{
+                        var clipboard = javafx.scene.input.Clipboard.getSystemClipboard();
+                        var content = new ClipboardContent();
+                        content.putString(cnpjFromUrl);
+                        clipboard.setContent(content);
+                        Components.ShowPopup(Main.stage, "CNPJ copiado para o teclado!");
+                    }))
+                    .c_child(Components.TextWithDetails("Preço: ", Utils.toBRLCurrency(f.precoEncontrado)));
+        }
+
+        return col;
     }
+
+//    Component ItemDetails(ProdutoModel model){
+//        return new Column(new ColumnProps().paddingAll(20))
+//                .c_child(new Text("Detalhes do produto", new TextProps().variant(TextVariant.SUBTITLE)))
+//                .c_child(new SpacerVertical(20))
+//                .c_child(Components.TextWithDetails("Código: ", model.codigo))
+//                .c_child(Components.TextWithDetails("Titulo: ", model.tituloBusca))
+//                .c_child(new Text("--------Fornecedor 1--------------"))
+//                .c_child(Components.TextWithDetails("URL: ", model.urlEncontrada))
+//                .c_child(Components.TextWithDetails("CNPJ: ", cnpjFromUrl(model.urlEncontrada)))
+//                .c_child(Components.TextWithDetails("Preço (R$): ", Utils.toBRLCurrency(model.precoEncontrado)))
+//                .c_child(new Text("--------Fornecedor 2--------------"))
+//                .c_child(Components.TextWithDetails("URL: ", model.urlEncontrada))
+//                .c_child(Components.TextWithDetails("CNPJ: ", cnpjFromUrl(model.urlEncontrada)))
+//                .c_child(Components.TextWithDetails("Preço (R$): ", Utils.toBRLCurrency(model.precoEncontrado)))
+//                .c_child(new Text("--------Fornecedor 3--------------"))
+//                .c_child(Components.TextWithDetails("URL: ", model.urlEncontrada))
+//                .c_child(Components.TextWithDetails("CNPJ: ", cnpjFromUrl(model.urlEncontrada)))
+//                .c_child(Components.TextWithDetails("Preço (R$): ", Utils.toBRLCurrency(model.precoEncontrado)));
+//    }
 }

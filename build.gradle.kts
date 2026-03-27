@@ -32,7 +32,7 @@ java {
 javafx {
     version = "17" // Mantida a versão 17.0.10.
 
-    modules("javafx.controls", "javafx.graphics")
+    modules("javafx.controls", "javafx.graphics", "javafx.web")
 }
 
 dependencies {

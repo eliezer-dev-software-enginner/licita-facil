@@ -5,16 +5,15 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.Label;
 import javafx.scene.paint.Color;
 import javafx.stage.Modality;
+import javafx.stage.Popup;
 import javafx.stage.Stage;
 import megalodonte.ReadableState;
 import megalodonte.State;
 import megalodonte.application.Context;
-import megalodonte.components.Component;
-import megalodonte.components.Select;
-import megalodonte.components.Text;
-import megalodonte.components.TextFlow;
+import megalodonte.components.*;
 import megalodonte.components.inputs.Input;
 import megalodonte.components.inputs.OnChangeResult;
 import megalodonte.components.layout_components.Column;
@@ -23,7 +22,7 @@ import megalodonte.props.InputProps;
 import megalodonte.props.RowProps;
 import megalodonte.props.SelectProps;
 import megalodonte.props.TextProps;
-import megalodonte.router.v2.Router;
+import megalodonte.router.Router;
 import org.kordamp.ikonli.entypo.Entypo;
 import org.kordamp.ikonli.javafx.FontIcon;
 
@@ -31,6 +30,7 @@ import java.math.BigDecimal;
 import java.text.NumberFormat;
 import java.util.List;
 import java.util.Locale;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 import static my_app.Utils.formatPhone;
@@ -58,16 +58,31 @@ public class Components {
         alert.showAndWait();
     }
 
+    public static void ShowPopup(Stage stage, String message) {
+        Popup popup = new Popup();
+
+        Label label = new Label(message);
+        label.setStyle("""
+                    -fx-background-color: #333;
+                    -fx-text-fill: white;
+                    -fx-padding: 10 16;
+                    -fx-background-radius: 6;
+                """);
+
+        popup.getContent().add(label);
+        popup.setAutoHide(true);
+        popup.show(stage);
+    }
+
 
     public static Component produtoForm( State<String> urlState,  State<String> precoState, State<String> imprimiuState,
-                                         State<String> cadastrouNoSiplanState, State<String> cnpjState){
+                                         State<String> cadastrouNoSiplanState){
         return new Row(new RowProps().spacingOf(10))
                 .children(
                     InputColumn("url", urlState, "Url encontrada"),
                         InputColumnCurrency("Preço", precoState),
                         SelectColumn("Imprimiu?", List.of("Sim","Não"), imprimiuState, it->it),
-                        SelectColumn("Registou no Siplan?", List.of("Sim","Não"), cadastrouNoSiplanState, it->it),
-                        InputColumn("CNPJ", cnpjState, "cnpj")
+                        SelectColumn("Registou no Siplan?", List.of("Sim","Não"), cadastrouNoSiplanState, it->it)
                 );
     }
 
@@ -161,6 +176,20 @@ public class Components {
         return new Row()
                 .r_child(new Text(label,  new TextProps().bold()))
                 .r_child(new Text(valueState,  new TextProps()));
+    }
+
+    public static Row TextWithDetailsAndButton(String label, Object value,
+                                               String btnLabel,
+                                               Runnable action) {
+        var textValueComponent = new Text(value == null? "" : value.toString(),
+                new TextProps().bold());
+
+        return new Row()
+                .children(
+                        new Button(btnLabel).onClick(action),
+                        new Text(label, new TextProps().bold()),
+                        textValueComponent
+                );
     }
 
     public static Row TextWithDetails(String label, Object value, boolean wrapText) {

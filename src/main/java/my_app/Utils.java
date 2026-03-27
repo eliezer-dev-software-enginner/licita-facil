@@ -2,6 +2,7 @@ package my_app;
 
 import javafx.collections.ObservableList;
 import javafx.scene.control.TableView;
+import megalodonte.base.Redirect;
 
 import java.math.BigDecimal;
 import java.text.NumberFormat;
@@ -10,6 +11,18 @@ import java.util.Random;
 import java.util.function.Consumer;
 
 public class Utils {
+
+    public static void abrirUrlEmBrowser(String url){
+        new Thread(()->{
+            Redirect.to(url);
+        }).start();
+    }
+
+    public static String getBaseUrl(String fullUrl) {
+        String[] splited = fullUrl.split("\\.br/");
+        return splited[0] + ".br";
+    }
+
     public static String toBRLCurrency(BigDecimal value){
         final NumberFormat BRL =
                 NumberFormat.getCurrencyInstance(new Locale("pt", "BR"));
