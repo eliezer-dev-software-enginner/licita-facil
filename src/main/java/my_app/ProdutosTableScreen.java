@@ -105,6 +105,9 @@ public class ProdutosTableScreen {
             ProdutoModel f = fornecedores.get(i);
             String cnpjFromUrl = cnpjFromUrl(f.urlEncontrada);
 
+            final State<Boolean> imprimiu = State.of(f.imprimiu);
+            final var imprimiuStr = ComputedState.of(()-> imprimiu.get()? "Foi Impresso": "Marcar como impresso", imprimiu);
+
             col.c_child(new Text("-------- Fornecedor " + (i + 1) + " --------------"))
                     .c_child(Components.TextWithDetailsAndButton("URL: ", f.urlEncontrada,
                             "Abrir", ()->{
@@ -117,7 +120,19 @@ public class ProdutosTableScreen {
                         clipboard.setContent(content);
                         Components.ShowPopup(Main.stage, "CNPJ copiado para o teclado!");
                     }))
-                    .c_child(Components.TextWithDetails("Preço: ", Utils.toBRLCurrency(f.precoEncontrado)));
+                    .c_child(Components.TextWithDetails("Preço: ", Utils.toBRLCurrency(f.precoEncontrado)))
+                    .c_child(new Button(imprimiuStr).onClick(()->{
+                       imprimiu.set(!imprimiu.get());
+
+                       boolean newStateValue = imprimiu.get();
+
+                        try {
+                            Main.jsonDB.atualizarStatusDeImpressao(newStateValue, f);
+                        } catch (IOException e) {
+                            UI.runOnUi(()->  Components.ShowAlertError(e.getMessage()));
+                        }
+                    }))
+            ;
         }
 
         return col;

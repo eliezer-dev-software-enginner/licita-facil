@@ -81,4 +81,9 @@ public class JsonDB {
                 .toList();
     }
 
+    public void atualizarStatusDeImpressao(boolean newStateValue, ProdutoModel model) throws IOException {
+        model.imprimiu = newStateValue;
+
+        //TODO: o ideal é comparar pelo ID
+    }
 }

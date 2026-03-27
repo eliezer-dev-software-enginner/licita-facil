@@ -11,6 +11,7 @@ import megalodonte.base.UI;
 import megalodonte.components.*;
 import megalodonte.components.inputs.Input;
 import megalodonte.components.layout_components.Column;
+import megalodonte.components.layout_components.Container;
 import megalodonte.components.layout_components.Row;
 import megalodonte.props.*;
 import megalodonte.router.v2.Router;
@@ -47,28 +48,31 @@ public class HomeScreen {
     public HomeScreen(Router router) {this.router = router;}
 
     public Component render() {
-        return new Column(new ColumnProps().paddingAll(20))
-                .children(
-                        menuBar(),
-                        new Button("Siga-me no Github").onClick(()-> Redirect.to("https://github.com/eliezer-dev-software-enginner")),
-                        new SpacerVertical(10),
-                        new Text("Algumas facilidades para agilizar o cadastro de fornecedores no Siplan"),
-                        new SpacerVertical(20),
-                        topForm(),
-                        new SpacerVertical(20),
-                        Show.when(buscarWasClicked, ()->
-                             new Column(new ColumnProps().spacingOf(10))
-                                    .children(
-                                      Components.produtoForm(urlState1,  precoState1, imprimiuState1, cadastrouNoSiplanState1),
-                                            Components.produtoForm(urlState2,  precoState2, imprimiuState2, cadastrouNoSiplanState2),
-                                            Components.produtoForm(urlState3,  precoState3, imprimiuState3, cadastrouNoSiplanState3)
-                                    )
-                        ),
-                        new SpacerVertical(20),
-                        Components.TextWithValue("Média: ", precoMedioComputedState),
-                        new SpacerVertical(20),
-                        new Text("Criado por Eliezer - 2026", new TextProps().fontSize(12))
-                );
+
+        return new Container().children(
+                menuBar(),
+                new Column(new ColumnProps().paddingAll(20))
+                        .children(
+                                new Button("Siga-me no Github").onClick(()-> Redirect.to("https://github.com/eliezer-dev-software-enginner")),
+                                new SpacerVertical(10),
+                                new Text("Algumas facilidades para agilizar o cadastro de fornecedores no Siplan"),
+                                new SpacerVertical(20),
+                                topForm(),
+                                new SpacerVertical(20),
+                                Show.when(buscarWasClicked, ()->
+                                        new Column(new ColumnProps().spacingOf(10))
+                                                .children(
+                                                        Components.produtoForm(urlState1,  precoState1, imprimiuState1, cadastrouNoSiplanState1),
+                                                        Components.produtoForm(urlState2,  precoState2, imprimiuState2, cadastrouNoSiplanState2),
+                                                        Components.produtoForm(urlState3,  precoState3, imprimiuState3, cadastrouNoSiplanState3)
+                                                )
+                                ),
+                                new SpacerVertical(20),
+                                Components.TextWithValue("Média: ", precoMedioComputedState),
+                                new SpacerVertical(20),
+                                new Text("Criado por Eliezer - 2026", new TextProps().fontSize(12))
+                        )
+        );
     }
 
     private Component menuBar(){
