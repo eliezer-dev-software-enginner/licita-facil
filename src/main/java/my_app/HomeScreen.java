@@ -76,6 +76,7 @@ public class HomeScreen {
                 .menu(new Menu("Cadastros")
                         .item("Fornecedores", ()-> {
                            var stage =  new Stage();
+                           stage.setTitle("Fornecedores - Site/CNPJ");
 
                            var scene = new Scene((Parent) new FornecedoresScreen(router).render().getJavaFxNode());
                            stage.setScene(scene);
@@ -86,6 +87,7 @@ public class HomeScreen {
                         })
                         .item("Ver Produtos", ()-> {
                             var stage =  new Stage();
+                            stage.setTitle("Produtos");
 
                             var scene = new Scene((Parent) new ProdutosTableScreen(router).render().getJavaFxNode());
                             stage.setScene(scene);
