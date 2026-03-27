@@ -60,6 +60,12 @@ public class JsonDB {
         return carregarDb().produtos();
     }
 
+    public boolean urlJaExiste(String fullUrl) throws IOException {
+        var fornecedor = buscarFornecedorPorUrl(fullUrl);
+
+        return fornecedor != null;
+    }
+
     public FornecedorModel buscarFornecedorPorUrl(String fullUrl) throws IOException {
         String baseUrl = getBaseUrl(fullUrl);
 

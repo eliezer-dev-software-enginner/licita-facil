@@ -81,7 +81,13 @@ public class FornecedoresScreen {
     void handleClickAdicionar(){
         UI.runOnUi(()->{
             try{
-                String baseUrl = getBaseUrl(siteUrl.get().trim());
+                String urlTrimmed = siteUrl.get().trim();
+                if(Main.jsonDB.urlJaExiste(urlTrimmed)){
+                    Components.ShowAlertError("URL já cadastrada");
+                    return;
+                }
+
+                String baseUrl = getBaseUrl(urlTrimmed);
                 System.out.println(baseUrl);
 
                 String cnpj_ = cnpj.get().trim();
